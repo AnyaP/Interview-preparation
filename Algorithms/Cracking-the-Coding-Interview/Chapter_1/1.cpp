@@ -1,10 +1,12 @@
-#include "../../../testing.h"
+#include "../../testing.h"
 
 #include <string>
+#include <iostream>
 
 bool AllUnique(const std::string& s)
 {
     // Your code goes here.
+    return true;
 }
 
 void TestAll()
@@ -23,6 +25,8 @@ void TestAll()
 
 int main()
 {
+    std::cout << "hello" << std::endl;
     TestAll();
+
     return 0;
 }
