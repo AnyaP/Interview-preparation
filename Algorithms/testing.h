@@ -1,3 +1,5 @@
+#include "prettyprint.h"
+
 #include <cassert>
 #include <iostream>
 
