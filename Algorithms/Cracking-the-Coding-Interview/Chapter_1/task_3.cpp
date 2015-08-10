@@ -1,41 +1,48 @@
 #include "../../testing.h"
 
 #include <string>
+#include <vector>
 #include <iostream>
+#include <algorithm>
 
 // 1. assume that characters are ASCII
 // 2. create an array for checking (256-length)
 // 3. check and copy if the character is new
 
+const int ALPHABET_SIZE = 256;
+
 std::string RemoveDuplicates(std::string s) {
-    bool occured[256];
-    for (int i = 0; i < 256; ++i) {
-        occured[i] = false;
-    }
-    auto tail = s.begin();
-    for (auto it = s.begin(); it < s.end(); ++it) {
-        // the character is new
-        if (!occured[static_cast<unsigned char>(*it)]) {
-            *tail = *it;
+    std::vector<bool> occurred(ALPHABET_SIZE, false);
+    int tail = 0;
+    for (int i = 0; i < s.size(); ++i) {
+        auto c = static_cast<unsigned char>(s[i]);
+        if (!occurred[c]) {
+            s[tail] = s[i];
             ++tail;
-            occured[static_cast<unsigned char>(*it)] = true;
+            occurred[c] = true;
         }
-        // else - just ignore
     }
-    s.resize(tail - s.begin());
+    s.resize(tail);
     return s;
 }
 
 // time: O(n), space: additional 256-array
 
+void SortAndCompare(std::string raw, std::string correct) {
+    std::string result = RemoveDuplicates(raw);
+    std::sort(result.begin(), result.end());
+    std::sort(correct.begin(), correct.end());
+    CHECK_EQUAL(result, correct);
+}
+
 void TestRemoveDuplicates() {
-    CHECK_EQUAL(RemoveDuplicates(""), "");
-    CHECK_EQUAL(RemoveDuplicates("a"), "a");
-    CHECK_EQUAL(RemoveDuplicates("aaa"), "a");
-    CHECK_EQUAL(RemoveDuplicates("abcde"), "abcde");
-    CHECK_EQUAL(RemoveDuplicates("ababab"), "ab");
-    CHECK_EQUAL(RemoveDuplicates("aaabbbb"), "ab");
-    CHECK_EQUAL(RemoveDuplicates("bd2bb22aZkl"), "bd2aZkl");
+    SortAndCompare("", "");
+    SortAndCompare("a", "a");
+    SortAndCompare("aaa", "a");
+    SortAndCompare("abcde", "abcde");
+    SortAndCompare("ababab", "ab");
+    SortAndCompare("aaabbbb", "ab");
+    SortAndCompare("bd2bb22aZkl", "bd2aZkl");
 }
 
 int main()
