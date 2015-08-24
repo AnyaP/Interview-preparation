@@ -2,7 +2,9 @@
 # include <iostream>
 # include <vector>
 
-void Rotate(std::vector<std::vector<int>>& matrix) {
+using Matrix = std::vector<std::vector<int>>;
+
+void Rotate(Matrix& matrix) {
     int N = matrix.size();
     for (int depth = 0; depth < N / 2; ++depth) {
         int start = depth;
@@ -17,22 +19,43 @@ void Rotate(std::vector<std::vector<int>>& matrix) {
     }
 }
 
+Matrix GenerateMatrix(int N) {
+    Matrix matrix(N, std::vector<int>(N));
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            matrix[i][j] = i*N + j;
+        }
+    }
+    return matrix;
+}
+
 int main(){
-    std::vector<std::vector<int>> even_matrix(2, std::vector<int>(2));
-    even_matrix[0][0] = 1;
-    even_matrix[0][1] = 2;
-    even_matrix[1][0] = 3;
-    even_matrix[1][1] = 4;
+    Matrix stress_matrix = GenerateMatrix(125);
+    Matrix copy_stress_matrix = stress_matrix;
+    for (int i = 0; i < 4; ++i) {
+        Rotate(copy_stress_matrix);
+    }
+    //std::cout << stress_matrix;
+    //std::cout << copy_stress_matrix << std::endl << std::endl;
+    CHECK_EQUAL(stress_matrix, copy_stress_matrix);
+
+    Matrix even_matrix(2, std::vector<int>(2));
+    even_matrix = {
+        {1, 2},
+        {3, 4}
+    };
 
     std::cout << even_matrix;
     Rotate(even_matrix);
     std::cout << even_matrix << std::endl;
 
 
-    std::vector<std::vector<int>> odd_matrix(3, std::vector<int>(3));
-    odd_matrix[0]= {1, 2, 3};
-    odd_matrix[1]= {4, 5, 6};
-    odd_matrix[2]= {7, 8, 9};
+    Matrix odd_matrix(3, std::vector<int>(3));
+    odd_matrix = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
 
     std::cout << odd_matrix;
     Rotate(odd_matrix);
