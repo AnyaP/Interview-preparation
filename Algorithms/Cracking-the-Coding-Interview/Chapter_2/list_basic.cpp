@@ -1,17 +1,14 @@
 #include <iostream>
 
 class Node {
-    Node* next;
+    Node* next = nullptr;
     int data;
 
 public:
-    Node () {
-        next = 0;
-    }
+    Node () {}
 
-    Node (int d) {
+    explicit Node (int d) {
         data = d;
-        next = 0;
     }
 
     void Append (int d) {
@@ -32,12 +29,21 @@ public:
     }
 };
 
+void DeleteList (Node* head) {
+    Node* p = head;
+    while (p != nullptr) {
+        p = p->GetNext();
+        delete p;
+    }
+}
+
 
 int main() {
-    Node* myList = new Node(5);
+    Node* myList = new Node();
     myList->Append(25);
     for (Node* nodePtr = myList; nodePtr != 0; nodePtr = nodePtr->GetNext()) {
         std::cout << nodePtr->GetData() << std::endl;
     }
+    DeleteList(myList);
     return 0;
 }
