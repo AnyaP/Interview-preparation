@@ -1,47 +1,46 @@
 # include "../../testing.h"
 # include <iostream>
 # include <vector>
+# include <math.h>
 
 struct Node {
     Node* next;
     int data;
 
-    Node(int d) {
-        data = d;
-        next = 0;
-    }
+    Node(int d): data (d), next(nullptr) {}
 };
 
-// assume that both numbers contain at least one digit
+
 Node* SumListsAsNumbers(Node* first, Node* second) {
     bool memory = 0;
-    if (first->data + second->data > 9) {
-        memory = 1;
-    }
-    Node* result = new Node((first->data + second->data) % 10);
+    bool headIsCreated = false;
+    Node *result, *head;
 
-    Node* inResult = result;
-    Node* inFirst = first->next;
-    Node* inSecond = second->next;
-    while (inFirst or inSecond or memory) {
+    while (first or second or memory) {
         int value = memory;
-        if (inFirst != 0) {
-            value += inFirst->data;
-            inFirst = inFirst->next;
+        if (first != nullptr) {
+            value += first->data;
+            first = first->next;
         }
-        if (inSecond != 0) {
-            value += inSecond->data;
-            inSecond = inSecond->next;
+        if (second != nullptr) {
+            value += second->data;
+            second = second->next;
         }
         if (value > 9) {
             memory = 1;
         } else {
             memory = 0;
         }
-        inResult->next = new Node(value % 10);
-        inResult = inResult->next;
+        if (!headIsCreated) {
+            result = new Node(value % 10);
+            head = result;
+            headIsCreated = true;
+        } else {
+            result->next = new Node(value % 10);
+            result = result->next;
+        }
     }
-    return result;
+    return head;
 }
 
 Node* CreateList(std::vector<int> values) {
@@ -64,32 +63,23 @@ void PrintList(Node* head) {
 }
 
 int ListToNumber(Node* head) {
+    const int radix = 10;
+    int radixPower = 0;
     int number = 0;
-    int pos = 1;
     for (Node* current = head; current; current = current->next) {
-        number += current->data * pos;
-        pos *= 10;
+        number += current->data * pow(radix, radixPower);
+        ++radixPower;
     }
     return number;
 }
 
+
 void TestSumListsAsNumbers() {
-    Node* first = CreateList({1, 1, 1});
-    Node* second = CreateList({5, 5, 5});
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(first, second)), 666);
-
-    first = CreateList({3, 1, 1});
-    second = CreateList({5, 1, 9});
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(first, second)), 1028);
-
-    first = CreateList({8, 5});
-    second = CreateList({7});
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(first, second)), 65);
-
-    first = CreateList({9});
-    second = CreateList({1});
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(first, second)), 10);
-
+    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({1, 1, 1}), CreateList({5, 5, 5}))), 666);
+    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({3, 1, 1}), CreateList({5, 1, 9}))), 1028);
+    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({9}), CreateList({1}))), 10);
+    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({2, 1, 1, 1, 1, 1, 1, 1}), CreateList({7}))), 11111119);
+    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({9, 9, 9}), CreateList({1}))), 1000);
 }
 
 int main() {
