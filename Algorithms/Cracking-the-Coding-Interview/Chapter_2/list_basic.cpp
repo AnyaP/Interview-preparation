@@ -14,26 +14,28 @@ public:
     void Append (int d) {
         Node* newNode = new Node(d);
         Node* tail = this;
-        while (tail->next != 0) {
+        while (tail->next != nullptr) {
             tail = tail->next;
         }
         tail->next = newNode;
     }
 
-    Node* GetNext() {
+    Node* GetNext() const {
         return this->next;
     }
 
-    int GetData() {
+    int GetData() const {
         return this->data;
     }
 };
 
 void DeleteList (Node* head) {
-    Node* p = head;
-    while (p != nullptr) {
-        p = p->GetNext();
-        delete p;
+    Node* current = head;
+    Node* previous;
+    while (current != nullptr) {
+        Node* previous = current;
+        current = current->GetNext();
+        delete previous;
     }
 }
 
@@ -41,7 +43,7 @@ void DeleteList (Node* head) {
 int main() {
     Node* myList = new Node();
     myList->Append(25);
-    for (Node* nodePtr = myList; nodePtr != 0; nodePtr = nodePtr->GetNext()) {
+    for (Node* nodePtr = myList; nodePtr != nullptr; nodePtr = nodePtr->GetNext()) {
         std::cout << nodePtr->GetData() << std::endl;
     }
     DeleteList(myList);
