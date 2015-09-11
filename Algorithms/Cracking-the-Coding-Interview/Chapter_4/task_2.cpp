@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <algorithm>
 #include "../../testing.h"
 
 using Graph = std::vector< std::vector<int> >;
@@ -16,15 +17,14 @@ bool FindRoute(const Graph& graph, int nodesNumber, int from, int to) {
     }
 
     std::queue<int> toBeProcessed;
-    std::vector<int> reached(nodesNumber, false);
+    std::vector<bool> reached(nodesNumber, false);
     toBeProcessed.push(from);
     reached[from] = true;
 
     while (!toBeProcessed.empty()) {
         int node = toBeProcessed.front();
         toBeProcessed.pop();
-        for (size_t i = 0; i < graph[node].size(); ++i) {
-            int next = graph[node][i];
+        for (int next  : graph[node]) {
             if (!reached[next]) {
                 if (next == to) {
                     return true;
@@ -39,24 +39,19 @@ bool FindRoute(const Graph& graph, int nodesNumber, int from, int to) {
 }
 
 
-void GenerateRandomEdges(Graph* g, int minNode, int maxNode, int edgesNumber) {
-    int currentNumber = 0;
-    while (currentNumber < edgesNumber) {
+void GenerateRandomEdges(Graph* g, int minNode, int maxNode, int requiredEdgesNumber) {
+    int generatedEdgesNumber = 0;
+    while (generatedEdgesNumber < requiredEdgesNumber) {
         // generate a random edge
         std::uniform_int_distribution<> dis(minNode, maxNode);
         int from = dis(gen);
         int to = dis(gen);
-        // add it if it doesn't exist already
-        bool edgeFound = false;
-        for (int i = 0; i < (*g)[from].size(); ++i) {
-            if ((*g)[from][i] == to) {
-                edgeFound = true;
-                break;
-            }
-        }
+        // add it if it doesn't exist yet
+        std::vector<int>& edges = (*g)[from];
+        bool edgeFound = std::find(edges.begin(), edges.end(), to) != edges.end();
         if (!edgeFound) {
-            (*g)[from].push_back(to);
-            ++currentNumber;
+            edges.push_back(to);
+            ++generatedEdgesNumber;
         }
     }
 }
