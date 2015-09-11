@@ -1,6 +1,7 @@
 # include <iostream>
 # include <vector>
 # include <algorithm>
+#include <cmath>
 # include "../../testing.h"
 
 struct Node {
@@ -56,7 +57,10 @@ void TestCreateTree(const std::vector<int>& testVector) {
     std::vector<int> traversedVector;
     InOrderTraversal(tree, traversedVector);
     CHECK_EQUAL(traversedVector, testVector);
-    CHECK_EQUAL(CheckBalanced(tree), true);
+    // CHECK_EQUAL(CheckBalanced(tree), true);
+    int minimalHeight = testVector.size() == 0?
+                        0 : floor(std::log2(testVector.size())) + 1;
+    CHECK_EQUAL(MaxDepth(tree), minimalHeight);
 }
 
 int main() {
