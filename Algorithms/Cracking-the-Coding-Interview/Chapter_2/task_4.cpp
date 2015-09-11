@@ -1,7 +1,7 @@
 # include "../../testing.h"
 # include <iostream>
 # include <vector>
-# include <math.h>
+# include <cmath>
 
 struct Node {
     Node* next;
@@ -12,12 +12,10 @@ struct Node {
 
 
 Node* SumListsAsNumbers(Node* first, Node* second) {
-    bool memory = 0;
     bool headIsCreated = false;
-    Node *result, *head;
-
-    while (first or second or memory) {
-        int value = memory;
+    Node *result = nullptr, *head = nullptr;
+    int value = 0;
+    while (first or second or value) {
         if (first != nullptr) {
             value += first->data;
             first = first->next;
@@ -26,11 +24,7 @@ Node* SumListsAsNumbers(Node* first, Node* second) {
             value += second->data;
             second = second->next;
         }
-        if (value > 9) {
-            memory = 1;
-        } else {
-            memory = 0;
-        }
+
         if (!headIsCreated) {
             result = new Node(value % 10);
             head = result;
@@ -39,6 +33,8 @@ Node* SumListsAsNumbers(Node* first, Node* second) {
             result->next = new Node(value % 10);
             result = result->next;
         }
+
+        value /= 10;
     }
     return head;
 }
@@ -75,11 +71,41 @@ int ListToNumber(Node* head) {
 
 
 void TestSumListsAsNumbers() {
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({1, 1, 1}), CreateList({5, 5, 5}))), 666);
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({3, 1, 1}), CreateList({5, 1, 9}))), 1028);
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({9}), CreateList({1}))), 10);
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({2, 1, 1, 1, 1, 1, 1, 1}), CreateList({7}))), 11111119);
-    CHECK_EQUAL(ListToNumber(SumListsAsNumbers(CreateList({9, 9, 9}), CreateList({1}))), 1000);
+    CHECK_EQUAL(
+        ListToNumber(SumListsAsNumbers(
+            CreateList({}),
+            CreateList({}))),
+        0);
+    CHECK_EQUAL(
+        ListToNumber(SumListsAsNumbers(
+            CreateList({0}),
+            CreateList({}))),
+        0);
+    CHECK_EQUAL(
+        ListToNumber(SumListsAsNumbers(
+            CreateList({}),
+            CreateList({1}))),
+        1);
+    CHECK_EQUAL(
+        ListToNumber(SumListsAsNumbers(
+            CreateList({1, 1, 1}),
+            CreateList({5, 5, 5}))),
+        666);
+    CHECK_EQUAL(
+        ListToNumber(SumListsAsNumbers(
+            CreateList({3, 1, 1}),
+            CreateList({5, 1, 9}))),
+        1028);
+    CHECK_EQUAL(
+        ListToNumber(SumListsAsNumbers(
+            CreateList({2, 1, 1, 1, 1, 1, 1, 1}),
+            CreateList({7}))),
+        11111119);
+    CHECK_EQUAL(
+        ListToNumber(SumListsAsNumbers(
+            CreateList({9, 9, 9}),
+            CreateList({1}))),
+        1000);
 }
 
 int main() {

@@ -21,11 +21,11 @@ public:
     }
 
     Node* GetNext() const {
-        return this->next;
+        return next;
     }
 
     int GetData() const {
-        return this->data;
+        return data;
     }
 };
 
