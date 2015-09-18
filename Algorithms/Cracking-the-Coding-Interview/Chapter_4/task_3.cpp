@@ -6,27 +6,29 @@
 
 struct Node {
     int value;
-    Node* left;
-    Node* right;
+    Node* left = nullptr;
+    Node* right = nullptr;
+
+    Node(int v): value(v) {}
 };
 
 using Iterator = std::vector<int>::const_iterator;
 
 // Creates a balanced binary search tree
 // [from; to)
-Node* CreateTree(Iterator from, Iterator to) {
-    if (to - from == 0) {
+template <typename It>
+Node* CreateTree(It begin, It end) {
+    if (end - begin == 0) {
         return nullptr;
     }
-    Iterator middle = from + (to - from) / 2; // Should I be afraid of (from < to)?
-    Node* root = new Node();
-    root->value = *middle;
-    root->left = CreateTree(from, middle);
-    root->right = CreateTree(middle + 1, to);
+    Iterator middle = begin + (end - begin) / 2; // Should I be afraid of (from < to)?
+    Node* root = new Node(*middle);
+    root->left = CreateTree(begin, middle);
+    root->right = CreateTree(middle + 1, end);
     return root;
 }
 
-void InOrderTraversal(Node* root, std::vector<int>& buff) {
+void InOrderTraversal(const Node* root, std::vector<int>& buff) {
     if (root != nullptr) {
         InOrderTraversal(root->left, buff);
         buff.push_back(root->value);
@@ -34,22 +36,30 @@ void InOrderTraversal(Node* root, std::vector<int>& buff) {
     }
 }
 
-int MaxDepth(Node* tree) {
+int MaxDepth(const Node* tree) {
     if (tree == nullptr) {
         return 0;
     }
     return 1 + std::max(MaxDepth(tree->left), MaxDepth(tree->right));
 }
 
-int MinDepth(Node* tree) {
+int MinDepth(const Node* tree) {
     if (tree == nullptr) {
         return 0;
     }
     return 1 + std::min(MinDepth(tree->left), MinDepth(tree->right));
 }
 
-bool CheckBalanced(Node* tree) {
+bool CheckBalanced(const Node* tree) {
     return MaxDepth(tree) - MinDepth(tree) <= 1;
+}
+
+void DeleteTree(Node* root) {
+    if (root != nullptr) {
+        DeleteTree(root->left);
+        DeleteTree(root->right);
+        delete root;
+    }
 }
 
 void TestCreateTree(const std::vector<int>& testVector) {
@@ -61,6 +71,7 @@ void TestCreateTree(const std::vector<int>& testVector) {
     int minimalHeight = testVector.size() == 0?
                         0 : floor(std::log2(testVector.size())) + 1;
     CHECK_EQUAL(MaxDepth(tree), minimalHeight);
+    DeleteTree(tree);
 }
 
 int main() {
